@@ -4,6 +4,6 @@ namespace PriceCalculation
 {
     public interface ICalculator
     {
-        decimal Calculate(IEnumerable<KeyValuePair<Item, int>> contents);
+        decimal Calculate(IEnumerable<KeyValuePair<string, (decimal unitPrice, int quantity)>> contents);
     }
 }

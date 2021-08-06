@@ -13,14 +13,15 @@ namespace PriceCalculation
                 _offers.AddRange(offers);
         }
 
-        public decimal Calculate(IEnumerable<KeyValuePair<Item, int>> contents)
+        public decimal Calculate(IEnumerable<KeyValuePair<string, (decimal unitPrice, int quantity)>> contents)
         {
             if (contents == null || !contents.Any())
                 return 0m;
 
+
             var discountTotal = _offers.Aggregate(0m, (total, next) => total += next.Calculate(contents));
 
-            return contents.Sum(basketItem => basketItem.Key.Cost * basketItem.Value) - discountTotal;
+            return contents.Sum(basketItem => basketItem.Value.unitPrice * basketItem.Value.quantity) - discountTotal;
         }
     }
 }

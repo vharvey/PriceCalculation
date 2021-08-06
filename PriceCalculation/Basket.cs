@@ -6,22 +6,22 @@ namespace PriceCalculation
     public class Basket
     {
         private readonly ICalculator _calculator;
+        private readonly Dictionary<string, (decimal unitPrice, int quantity)> _contents;
 
         public Basket(ICalculator calculator)
         {
             _calculator = calculator ?? throw new ArgumentNullException(nameof(calculator));
+            _contents = new Dictionary<string, (decimal unitPrice, int quantity)>();
         }
 
-        public Dictionary<Item, int> Contents  => new Dictionary<Item, int>();
-
-        public Basket AddItem(Item item, int quantity)
+        public Basket AddItem(string product, decimal unitPrice, int quantity)
         {
-            if(!(item == null || quantity == 0))
+            if (!(string.IsNullOrEmpty(product) || unitPrice == 0m || quantity == 0))
             {
-                if (Contents.ContainsKey(item))
-                    Contents[item] += quantity;
+                if (_contents.ContainsKey(product))
+                    _contents[product] = (_contents[product].unitPrice, _contents[product].quantity + quantity);
                 else
-                    Contents[item] = quantity;
+                    _contents.Add(product, (unitPrice, quantity));
             }
 
             return this;
@@ -29,7 +29,7 @@ namespace PriceCalculation
 
         public decimal GetTotal()
         {
-            return _calculator.Calculate(Contents);
+            return _calculator.Calculate(_contents);
         }
     }
 }

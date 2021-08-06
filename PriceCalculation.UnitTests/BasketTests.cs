@@ -19,30 +19,31 @@ namespace PriceCalculation.UnitTests
 
 
         [Fact]
-        public void GetTotal_PassesContentsToCalculator()
+        public void GetTotal_PassesConsolidatedContentsToCalculator()
         {
-            IEnumerable<KeyValuePair<Item, int>> itemList = null;
+            IEnumerable<KeyValuePair<string, (decimal, int)>> itemList = null;
             var calculator = new Mock<ICalculator>();
-            calculator.Setup(c => c.Calculate(It.IsAny<IEnumerable<KeyValuePair<Item, int>>>()))
-                .Callback<IEnumerable<KeyValuePair<Item, int>>>((contents) => itemList = contents);
+            calculator.Setup(c => c.Calculate(It.IsAny<IEnumerable<KeyValuePair<string, (decimal unitPrice, int quantity)>>>()))
+                .Callback<IEnumerable<KeyValuePair<string, (decimal, int)>>>((contents) => itemList = contents);
 
             var basket = new Basket(calculator.Object)
-                .AddItem(new Item("item one", 12.3m), 1)
-                .AddItem(new Item("item two", 4.56m), 1);
+                .AddItem("item one", 12.3m, 1)
+                .AddItem("item two", 4.56m, 1)
+                .AddItem("item one", 12.3m, 6);
 
             var total = basket.GetTotal();
 
-            itemList.Should().BeEquivalentTo(basket.Contents);
+            itemList.Should().BeEquivalentTo(new Dictionary<string, (decimal, int)> { { "item one", (12.3m, 7) }, { "item two", (4.56m, 1) } });
         }
 
         [Fact]
         public void GetTotal_GetsTotalFromCalculator()
         {
             var calculator = new Mock<ICalculator>();
-            calculator.Setup(c => c.Calculate(It.IsNotNull<IEnumerable<KeyValuePair<Item, int>>>()))
+            calculator.Setup(c => c.Calculate(It.IsNotNull<IEnumerable<KeyValuePair<string, (decimal unitPrice, int quantity)>>>()))
                 .Returns(123.45m);
             var basket = new Basket(calculator.Object)
-                .AddItem(new Item("test item", 98.7m), 1);
+                .AddItem("test item", 98.7m, 1);
 
             var total = basket.GetTotal();
 
