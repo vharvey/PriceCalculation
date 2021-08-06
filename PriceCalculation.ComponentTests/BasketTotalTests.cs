@@ -22,7 +22,7 @@ namespace PriceCalculation.ComponentTests
             var butter = new Item("butter", 0.8m);
             var milk = new Item("milk", 1.15m);
 
-            var basket = new Basket()
+            var basket = new Basket(new BasketCalculator())
                 .AddItem(bread, breadCount)
                 .AddItem(butter, butterCount)
                 .AddItem(milk, milkCount);
