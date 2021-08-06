@@ -6,10 +6,6 @@ namespace PriceCalculation.ComponentTests
 {
     public class BasketTotalTests
     {
-        private const decimal _butterPrice = 0.8m;
-        private const decimal _milkPrice = 1.15m;
-        private const decimal _breadPrice = 1m;
-
         [Theory]
         [InlineData(0, 0, 0, 0)]
         [InlineData(1, 1, 1, 2.95)]
@@ -22,7 +18,7 @@ namespace PriceCalculation.ComponentTests
             var butter = new Item("butter", 0.8m);
             var milk = new Item("milk", 1.15m);
 
-            var basket = new Basket(new BasketCalculator())
+            var basket = new Basket(new BasketCalculator(null))
                 .AddItem(bread, breadCount)
                 .AddItem(butter, butterCount)
                 .AddItem(milk, milkCount);
